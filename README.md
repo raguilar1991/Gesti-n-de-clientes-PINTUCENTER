@@ -30,3 +30,32 @@ Este proyecto fue creado con el objetivo de automatizar procesos internos, mejor
 
 ## 🏗️ Estructura del proyecto
 
+/project
+├── static/
+│ ├── css/
+│ └── js/
+├── templates/
+│ ├── base.html
+│ ├── index.html
+│ ├── clientes.html
+├── app.py
+├── database.db
+└── README.md
+
+
+---
+
+## ▶️ Cómo ejecutar el proyecto
+
+### 1️⃣ Clonar el repositorio
+```bash
+git clone https://github.com/raguilar1991/Sistema-de-Gestion-Clientes-PINTUCENTER.git
+
+
+pip install -r requirements.txt
+
+EJECUTAR CODIGO
+python app.py
+
+ABRE TU NAVEGADOR
+👉 http://localhost:5000
