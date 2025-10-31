@@ -1,2 +1,32 @@
-# Gesti-n-de-clientes-PINTUCENTER
-Sistema WEB para la gestión de clientes: ingreso al sistema por un login con usuario y contraseña, ventana de  creación de clientes, ventana para generar cotizaciones, ventana para ingreso de productos.
+# 🧾 Sistema de Gestión de Clientes | PINTUCENTER
+
+Sistema web desarrollado para gestionar clientes, cotizaciones y seguimiento comercial para una empresa de ventas de insumos tecnológicos y pintura.
+
+Este proyecto fue creado con el objetivo de automatizar procesos internos, mejorar la gestión comercial y fortalecer mi portafolio como desarrollador.
+
+---
+
+## 🚀 Tecnologías utilizadas
+
+| Categoría       | Tecnologías |
+|-----------------|------------|
+| Backend         | Python (Flask) |
+| Frontend        | HTML, CSS, Bootstrap |
+| Base de datos   | SQLite |
+| Control de versión | Git + GitHub |
+
+---
+
+## 📂 Funcionalidades principales
+
+✅ Registro y gestión de clientes  
+✅ Creación de cotizaciones  
+✅ Seguimiento comercial y estados (Pendiente / Aprobado / Rechazado)  
+✅ Notificaciones con `flash`  
+✅ CRUD completo  
+✅ Validación de formularios  
+
+---
+
+## 🏗️ Estructura del proyecto
+
