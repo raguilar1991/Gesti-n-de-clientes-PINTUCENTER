@@ -59,3 +59,11 @@ python app.py
 
 ABRE TU NAVEGADOR
 👉 http://localhost:5000
+
+📧 Contacto
+
+👨‍💻 Autor: Robert Aguilar
+📍 Ecuador
+💼 Software Developer Jr + Área Comercial Tech
+📩 Email: reaguilare.19@gmail.com
+🔗 LinkedIn: https://www.linkedin.com/in/robert-ernesto-aguilar-espinales-117016279/
