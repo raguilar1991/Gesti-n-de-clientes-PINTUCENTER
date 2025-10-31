@@ -1,0 +1,204 @@
+/* ===== GENERAL ===== */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+/* ===== WRAPPER ===== */
+#wrapper {
+    display: flex;
+    align-items: stretch;
+    transition: all 0.3s ease; /* transición para toggle */
+}
+
+/* ===== SIDEBAR ===== */
+#sidebar-wrapper {
+    min-width: 220px;
+    max-width: 220px;
+    background-color: #343a40;
+    color: #fff;
+    transition: all 0.5s ease; /* animación al ocultar/mostrar */
+    height: 100%;
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    z-index: 1000;
+    margin-left: 0; /* visible por defecto */
+}
+
+#page-content-wrapper {
+    width: calc(100% - 220px); /* ✅ deja espacio para el sidebar */
+    margin-left: 220px; /* ✅ empuja el contenido a la derecha */
+    padding: 20px 40px;
+    margin-top: 56px;
+    transition: all 0.5s ease; /* ✅ puedes agregar esta línea aquí */
+}
+
+#wrapper.toggled #page-content-wrapper {
+    margin-left: 0;
+    width: 100%;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: -220px; /* oculto al togglear */
+}
+
+#sidebar-wrapper .sidebar-heading {
+    font-size: 1.2rem;
+}
+
+#sidebar-wrapper .list-group-item {
+    border: none;
+    padding: 15px 20px;
+    cursor: pointer;
+}
+
+#sidebar-wrapper .list-group-item:hover {
+    background-color: #495057;
+    color: #fff;
+}
+
+/* ===== SUBMENÚ LATERAL ===== */
+.has-submenu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.has-submenu .arrow {
+    transition: transform 0.3s ease;
+}
+
+.submenu-items {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.25s ease;
+    pointer-events: none;
+}
+
+.submenu-items.show,
+.has-submenu.open + .submenu-items {
+    max-height: 240px;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.has-submenu.open .arrow {
+    transform: rotate(180deg);
+}
+
+/* Hover en escritorio */
+@media (min-width: 992px) {
+    .has-submenu:hover + .submenu-items {
+        max-height: 240px;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .has-submenu:hover .arrow {
+        transform: rotate(180deg);
+    }
+}
+
+/* Items del submenú */
+.submenu-items .list-group-item {
+    background-color: #343a40;
+    border: none;
+    padding-left: 2.5rem;
+}
+
+.submenu-items .list-group-item:hover {
+    background-color: #495057;
+}
+
+/* Click en móvil */
+@media (max-width: 991px) {
+    .has-submenu.open + .submenu-items {
+        max-height: 240px;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .has-submenu.open .arrow {
+        transform: rotate(180deg);
+    }
+}
+
+/* ===== CONTENIDO PRINCIPAL ===== */
+/*#page-content-wrapper {
+    width: 100%;
+    padding: 20px 40px;
+    margin-top: 56px;  navbar fixed-top 
+    transition: all 0.3s ease;  animación al toggle 
+}*/
+
+
+/* LOGO HEADER */
+.logo-top {
+    width: 120px;
+    height: auto;
+}
+
+/* TABLA */
+.table-section {
+    overflow-x: auto;
+}
+
+.table-section table {
+    width: 100%;
+}
+
+.table-section th, .table-section td {
+    padding: 10px;
+    text-align: left;
+}
+
+.table-section th {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+.table-section tr:hover td {
+    background-color: #e9ecef;
+}
+
+/* BOTONES */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    transition: all 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: -220px;
+        position: fixed;
+        z-index: 1000;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: 0;
+    }
+
+    #page-content-wrapper {
+        padding: 15px;
+    }
+
+    .navbar .btn {
+        margin-right: 10px;
+    }
+}

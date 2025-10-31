@@ -1,0 +1,140 @@
+/* Centrar todo en pantalla */
+body, html {
+    height: 100%; /* Asegura que el body y html ocupen toda la altura */
+    margin: 0; /* Quita márgenes por defecto */
+    font-family: 'Segoe UI', sans-serif;
+    /*aqui pongo la imagen de fondo esta comentado por que esta todo corregido abajo*/
+    /*background: url('../img/fondopintu.png') no-repeat center center fixed;
+    background-size: cover; /* Asegura que la imagen cubra toda la pantalla */
+    display: flex; /* Usar Flexbox para centrar */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+}
+
+/* Contenedor principal */
+.login-wrapper { /* Nuevo contenedor para centrar */
+    width: 100%; /* Ocupa todo el ancho */
+    display: flex; /* Usar Flexbox */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+}
+
+/* Caja del formulario */
+.login-container { /* Caja blanca centrada */
+    background: white; /* Fondo blanco */
+    padding: 30px; /* Espaciado interno */
+    border-radius: 12px; /* Bordes redondeados */
+    box-shadow: 0 0 20px rgba(0,0,0,0.2); /* Sombra suave */
+    text-align: center; /* Centrar texto */
+    max-width: 400px; /* Ancho máximo */
+    width: 300px;
+}
+
+/* Logo más pequeño */
+.logo {
+    width: 250px;
+    margin-bottom: 01px; /* Espacio debajo del logo */
+}
+
+/* Títulos con colores del logo */
+.titulo {
+    font-size: 24px;
+    color: #013d7c;
+    margin-bottom: 4px;
+}
+
+.subtitulo {
+    font-size: 14px;
+    color: #ffc107;
+    margin-bottom: 20px;
+}
+
+.form-titulo {
+    font-size: 18px;
+    color: #000000; /*#007bff*/
+    margin-bottom: 15px;
+}
+
+.input-group {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.input-group label {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.input-group .icon {
+    font-size: 20px;
+    color: #013d7c;
+    margin-right: 5px;
+}
+
+/* Campos de entrada */
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+input:focus {
+    border-color: #007bff;       /* Borde azul al hacer clic */
+    box-shadow: 0 0 5px #007bff; /* Sombra azul suave */
+    outline: none;               /* Quita el borde por defecto del navegador */
+}
+
+
+/* Botón */
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #04182d;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Efecto al hacer clic en el botón */
+button:active {
+    transform: scale(0.98);
+    background-color: #004c99;
+}
+
+/* Mensaje de error */
+.error {
+    color: red;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* === Validación de contraseña === */
+.password-warning {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 10px;
+}
+body.login-page {
+  background-image: url('../img/fondopintu.png'); /* tu fondo del login */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+body.main-page {
+  background-image: none;
+  background-color: #ffffff; /* fondo blanco */
+}

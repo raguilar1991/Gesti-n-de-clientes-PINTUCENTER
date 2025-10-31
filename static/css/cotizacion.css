@@ -1,0 +1,307 @@
+/* ===========================
+   COTIZACION - ESTILOS MEJORADOS
+   =========================== */
+
+/* RESET / BOX-SIZING */
+* { box-sizing: border-box; }
+
+/* LOGO HEADER */
+.logo-top {
+    width: 120px;
+    height: auto;
+}
+
+/* ===== SIDEBAR ===== */
+#sidebar-wrapper {
+    min-width: 220px;
+    max-width: 220px;
+    background-color: #343a40;
+    color: #fff;
+    transition: all 0.5s ease; /* animación al ocultar/mostrar */
+    height: 100%;
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    z-index: 1000;
+    margin-left: 0; /* visible por defecto */
+}
+
+#page-content-wrapper {
+    width: calc(100% - 220px); /* ✅ deja espacio para el sidebar */
+    margin-left: 220px; /* ✅ empuja el contenido a la derecha */
+    padding: 20px 40px;
+    margin-top: 56px;
+    transition: all 0.5s ease; /* ✅ puedes agregar esta línea aquí */
+}
+
+#wrapper.toggled #page-content-wrapper { /* Ajuste para agregar_cliente */
+    margin-left: 0 !important; /* Anula el margen izquierdo */
+    width: 100% !important; /* Ocupa todo el ancho */
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: -220px; /* oculto al togglear */
+}
+
+#sidebar-wrapper .sidebar-heading {
+    font-size: 1.2rem;
+}
+
+#sidebar-wrapper .list-group-item {
+    border: none;
+    padding: 15px 20px;
+    cursor: pointer;
+}
+
+#sidebar-wrapper .list-group-item:hover {
+    background-color: #495057;
+    color: #fff;
+}
+
+/*esconderse correctamente en paginas de celular*/
+
+@media (max-width: 768px) {
+    #sidebar-wrapper {
+        position: fixed;
+        margin-left: -220px;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: 0;
+    }
+
+    #page-content-wrapper {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+/* ===== SUBMENÚ LATERAL ===== */
+.has-submenu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.has-submenu .arrow {
+    transition: transform 0.3s ease;
+}
+
+.submenu-items {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.25s ease;
+    pointer-events: none;
+}
+
+.submenu-items.show,
+.has-submenu.open + .submenu-items {
+    max-height: 240px;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.has-submenu.open .arrow {
+    transform: rotate(180deg);
+}
+
+/* ====== ESTILOS DE LOS ÍTEMS DEL SUBMENÚ ====== */
+.submenu-items .list-group-item {
+    background-color: #343a40; /* mismo color del sidebar */
+    color: #fff;               /* ✅ texto blanco visible */
+    border: none;
+    padding-left: 2.5rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.submenu-items .list-group-item:hover {
+    background-color: #495057; /* gris más claro */
+    color: #fff;               /* mantiene contraste */
+}
+
+.submenu-items .list-group-item i {
+    color: #fff;
+}
+
+/* ===== FORM CARD ===== */
+.form-card {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    padding: 28px 32px;
+    border-top: 6px solid #0d6efd;
+    animation: fadeIn 0.45s ease-in-out;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+}
+
+.form-card h2 {
+    color: #0d6efd;
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.form-card p {
+    text-align: center;
+    color: #6c757d;
+    margin-bottom: 25px;
+    font-size: 0.95em;
+}
+
+.form-card .form-label { font-weight: 500; margin-bottom: 5px; }
+
+.form-card .form-control {
+    border-radius: 8px;
+    padding: 10px 14px;
+    transition: all 0.3s ease;
+}
+
+.form-card .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 8px rgba(13,110,253,0.35);
+}
+
+/* ===== BOTONES ===== */
+.btn-primary {
+    background-color: #0d6efd;
+    border: none;
+    padding: 14px 0;
+    border-radius: 10px;
+    font-size: 1.05em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.15s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    transform: scale(1.02);
+}
+
+#btnBuscarProductos {
+    background-color: #0dcaf0;
+    border: none;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+#btnBuscarProductos:hover {
+    background-color: #0bbce0;
+    transform: scale(1.05);
+}
+
+/* ===== TABLA DE ITEMS ===== */
+#tablaItems {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#tablaItems thead th {
+    background-color: #0d6efd;
+    color: #fff;
+    border: none;
+    text-align: center;
+    font-weight: 600;
+}
+
+#tablaItems td, #tablaItems th {
+    border: 1px solid #dee2e6;
+    padding: 8px;
+    vertical-align: middle;
+}
+
+#tablaItems tbody tr:nth-child(even) { background-color: #f8f9fa; }
+#tablaItems tbody tr:hover { background-color: #eaf1ff; }
+
+#tablaItems td:first-child,
+#tablaItems td:nth-child(2) {
+    text-align: left;
+}
+
+#tablaItems input.form-control {
+    min-width: 90px;
+    text-align: right;
+}
+
+/* Botones + / - en tabla */
+.btn-compact {
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.85em;
+}
+
+/* ===== TOTALES ===== */
+.totales {
+    margin-top: 24px;
+    text-align: right;
+    max-width: 420px;
+    margin-left: auto;
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px 18px;
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.totales .fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.totales input.form-control {
+    width: 160px;
+    text-align: right;
+    font-weight: 500;
+}
+
+#total_final {
+    font-weight: 700;
+    color: #0d6efd;
+    border: 2px solid #0d6efd;
+}
+
+/* ===== MODAL ===== */
+#productosModal .modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+#productosModal table th {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+#productosModal tbody tr:hover {
+    background-color: #eaf1ff;
+    cursor: pointer;
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    #sidebar-wrapper { margin-left: -220px; }
+    #wrapper.toggled #sidebar-wrapper { margin-left: 0; }
+    #page-content-wrapper { margin-left: 0; width: 100%; padding: 15px; }
+    .form-card { margin: 20px 12px; padding: 18px; }
+    .totales { width: 100%; max-width: 100%; margin-top: 12px; }
+}

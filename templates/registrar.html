@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de usuario - PINTUCENTER</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/registrar.css') }}">
+</head>
+
+<body>
+    <div class="login-wrapper"> <!-- Contenedor principal -->
+        <div class="login-container"><!-- Contenedor del formulario de registro -->
+            <!--logo primero-->
+            <img src="{{ url_for('static', filename='img/PINTUCENTER500500.png') }}" alt="PINTUCENTER500" class="logo">
+            <h2 class="form-titulo">Registro de Usuario</h2> <!-- Título del formulario -->
+            <form method="POST" action="{{ url_for('registrar') }}"> <!-- Formulario que envía datos a la ruta 'registrar_usuario' -->
+                <div class="input-group">
+                    <label for="usuario"><span class="icon">👤</span>Usuario:</label>
+                    <input type="text" id="usuario" name="usuario" required>
+                </div>
+                <div class="input-group">
+                    <label for="contrasena"><span class="icon">🔒</span>Contraseña:</label>
+                    <input type="password" id="contrasena" name="contrasena" required>
+                </div>
+                <div class="input-group">
+                    <label for="confirmpass"><span class="icon">🔒</span>Confirmar Contraseña:</label>
+                    <input type="password" id="confirmpass" name="confirmpass" required>
+                </div>
+                <button type="submit">📝 Registrar</button>
+            </form>
+            <!--MENSAJES FLASH -->
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="error">{{ messages[0] }}</div> <!-- Mostrar el primer mensaje flash -->
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {/*esperar a que el DOM se cargue completamente */ 
+        const pass = document.getElementById('contrasena'); /*seleccionar el campo de contraseña y lo guarda en el pass */
+        const confirm = document.getElementById('confirmpass'); /*seleccionar el campo de confirmación de contraseña */
+        const button = document.querySelector('button[type="submit"]'); /*seleccionar el botón de envío del formulario */
+        /*- Se usará para activar o desactivar el botón según si las contraseñas coinciden. */
+        
+        const warning = document.createElement('div'); /*crear un nuevo elemento div para mostrar advertencias, se mostrara el mensaje del error */
+        warning.className = 'password-warning'; /*asignar la clase 'error' al div para aplicar estilos */
+        warning.style.marginTop = '10px'; /*agregar un margen superior de 10 píxeles al div  para que no ese pegado*/
+        warning.style.color = 'red'; /*establecer el color del texto en rojo */
+        warning.textContent = 'Las contraseñas no coinciden'; /*establecer el texto que se mostrará en el div */
+        warning.style.display = 'none'; /*inicialmente ocultar el div o el mensaje solo se muestra si las contraseñas no coinciden*/
+        
+        confirm.parentNode.appendChild(warning); /*agregar el div de advertencia justo después del campo de confirmación de contraseña en el formulario */
+        
+        function validar() {/*define función para validar si las contraseñas coinciden */
+            if (pass.value !== confirm.value) { /*comparar los valores de los campos de contraseña y confirmación */
+                warning.style.display = 'block'; /*si no coinciden, mostrar el mensaje de advertencia en rojo */
+                button.disabled = true; /*desactivar el botón de envío del formulario hasta que las contraseña coincidan */
+                button.style.backgroundColor = '#ccc'; /*cambiar el color de fondo del botón a gris para indicar que está desactivado */
+            } else { /*si las contraseñas coinciden */
+                warning.style.display = 'none'; /*ocultar el mensaje de advertencia */
+                button.disabled = false; /*activar el botón de envío del formulario */
+                button.style.backgroundColor = '#007bff'; /*restaurar el color de fondo original del botón (azul) para indicar que está activo */
+            }
+        }
+
+        pass.addEventListener('input', validar); /*agregar un evento de escucha al campo de contraseña que llama a la función validar cada vez que el usuario escribe algo */
+        confirm.addEventListener('input', validar); /*agregar un evento de escucha al campo de confirmación de contraseña que llama a la función validar cada vez que el usuario escribe algo */
+    });
+    </script>
+</body>
+</html>

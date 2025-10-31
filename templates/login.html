@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- Plantilla de inicio de sesion -->
+<html lang="es"> <!-- Lenguaje español -->
+<head>
+    <meta charset="UTF-8"> <!-- Codificación de caracteres -->
+    <title>Inicio de sesion PINTUCENTER</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}"><!-- Enlace al archivo CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- Meta para diseño responsivo -->
+</head>
+<body class="login-page">
+    <div class="login-wrapper"><!-- Contenedor principal -->
+        <div class="login-container" role="main" aria-labelledby="Titulo-login"><!-- Contenedor del formulario de inicio de sesion -->
+            <!--logo primero-->
+            <img src="{{ url_for('static', filename='img/PINTUCENTER500500.png') }}" alt="PINTUCENTER500" class="logo">
+            <!--<h1 class="titulo">PINTUCENTER</h1>
+            <p class="subtitulo">PASIÓN POR EL COLOR</p>-->
+            <!--FORMULARIO-->
+            <h2 class="form-titulo">Iniciar Sesion</h2>
+            <form method="POST" action="{{ url_for('validar_login') }}" autocomplete="on" novalidate> <!-- Formulario que envía datos a la ruta 'validar_login' -->
+                <div class="input-group"> <!-- Grupo de entrada para usuario -->
+                    <label for="usuario"><span class="icon" aria-hidden="true">👤</span>Usuario:</label>
+                    <input type="text" id="usuario" name="usuario" required autocomplete="username" autofocus value="{{ request.form.usuario|default('') }}"> <!-- Campo de texto para el usuario -->
+                </div>
+                
+                <div class="input-group">
+                    <label for="contrasena"><span class="icon" aria-hidden="true">🔒</span> Contraseña</label>
+                    <input type="password" id="contrasena" name="contrasena" required autocomplete="current-password"> <!-- Campo de contraseña -->
+                </div>
+                
+                <div class="input-group">
+                    <label class="remember">
+                        <input type="checkbox" name="remember" {% if request.form.remember %}checked{% endif %}>
+                        Recuérdame
+                    </label>
+                </div>
+                <button type="submit">🔓 Ingresar</button>
+            </form>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="error" role="alert" aria-live="assertive">
+                        {% for message in messages %}
+                        <p class="flash">{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+</body>
+</html>

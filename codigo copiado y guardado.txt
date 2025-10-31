@@ -1,0 +1,957 @@
+que es "gestion de clientes" ayudame a mejorarla visualmente, quiero mostrar la lista de clientes en una tabal moderna de bootstrap, el fondo debe de ser blanco y el logo debe de estar centrado en la parte de arriba, mas pequeño, ademas el buscar debe de estar mas pequeño no del porte de la pantalla
+
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav
+    <div class="sidebar"> <!-- Barra lateral -->
+        <!--<img src="{{ url_for('static', filename='img/PINTUCENTER500500.png') }}" alt="logo4" class="logo">-->
+        <h2>Pintucenter S.A.</h2><!-- Título de la empresa -->
+        <p class="slogan">Pasión por el color</p><!-- Slogan de la empresa -->
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('main') }}">🏠 Inicio</a></li>
+                <li><a href="#">👥 Clientes</a></li>
+                <li><a href="{{ url_for('productos') }}">📦 Productos</a></li>
+                <li><a href="#">🛒 Pedidos</a></li>
+                <li><a href="{{ url_for('login') }}">🔓 Cerrar sesión</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content"> <!-- Contenido principal -->
+        <!-- Aquí va el contenido dinámico de cada página -->
+         <header class="text-center my-3"> <!-- Encabezado centrado con margen -->
+            <img src="{{ url_for('static', filename='img/PINTUCENTER500500.png') }}" alt="PINTUCENTER" class="logo-top"> <!-- Logo en la parte superior y centrado -->
+            <h1>Bienvenido, {{ usuario }}</h1> <!-- Saludo personalizado -->
+            <p>Consulta y gestiona tus clientes fácilmente</p> <!-- Descripción breve -->
+        </header>
+
+        <section class="search-section mb-4 text-center"> <!-- Sección de búsqueda con margen inferior y centrado -->
+            <form method="post" action="{{ url_for('buscar_cliente') }}" class="d-flex justify-content-center" role="search" class="form-control w-50 me-2" aria-label="Buscar cliente">
+                <input type="text" name="criterio" value="{{ request.form.get('criterio', '') }}" placeholder="Buscar cliente por RUC o NOMBRE">
+                <button type="submit">🔍 Buscar</button>
+            </form>
+        </section>
+
+        <section class="table-section">
+            <h2>Listado de Clientes</h2>
+            {% if clientes %}
+                <table class="table table-striped table-hover"> <!--ESTILO DE TABLA DE BOOTSTRAP-->
+                    <thead><!-- Encabezados de la tabla -->
+                        <tr><!-- Encabezados de la tabla -->
+                            <th scope="col">ID</th>
+                            <th scope="col">RUC</th>
+                            <th scope="col">EMPRESA</th>
+                            <th scope="col">NOMBRE</th>
+                            <th scope="col">APELLIDO</th>
+                            <th scope="col">CORREO</th>
+                            <th scope="col">TELEFONO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cliente in clientes %}
+                        <tr>
+                            <td>{{ cliente['id'] }}</td>
+                            <td>{{ cliente['ruc'] }}</td>
+                            <td>{{ cliente['empresa'] }}</td>
+                            <td>{{ cliente['nombre'] }}</td>
+                            <td>{{ cliente['apellido'] }}</td>
+                            <td>{{ cliente['correo'] }}</td>
+                            <td>{{ cliente['telefono'] }}</td>
+                            <td><span style="color: gray;">✏️ Editar (no disponible aún)</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <!--<p style="color: #555; font-style: italic; margin-top: 10px;">-->
+                <p class="text-muted fst-italic mt-3">
+                    No hay clientes registrados por el momento.
+                </p>X
+            {% endif %}
+        </section>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+
+
+CODIGO PRIMERO DE APP.PY
+
+#================ IMPORTACIONES ==================
+from flask import Flask, request, render_template, redirect, url_for, flash
+import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask import session
+
+app=Flask(__name__)
+app.secret_key='clave_secreta_tmimport'
+
+#=============ahora voy a conectar con la base de datos===========
+def conectar_bd(): #conecto la base de datos
+    conn = sqlite3.connect('clientes.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
+#===========ruta principal muestra el fomulario login===================
+@app.route('/')
+def login():
+    return render_template('login.html') #aqui se muestra el formulario de login
+
+#=============ruta que valida el login=====================
+@app.route('/validar_login', methods=['POST'])
+def validar_login():
+    usuario=request.form['usuario']
+    contrasena=request.form['contrasena']
+
+    conn=conectar_bd()
+    cursor=conn.cursor()
+    cursor.execute('SELECT * FROM usuarios WHERE usuario=?', (usuario,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if row and check_password_hash(row['contrasena'], contrasena):
+        session['usuario'] = usuario  # Guardar el usuario en la sesión
+        return redirect(url_for('main')) #si el login es correcto redirige a la ruta main
+    else:
+        flash('Usuario o contraseña incorrectos')
+        return redirect(url_for('login')) #si el login es incorrecto redirige a la ruta login
+
+#=================ruta principal despues del login================
+@app.route('/main')
+def main():
+    usuario = session.get('usuario', 'Usuario')  # Obtener el usuario de la sesión, Si no hay sesión, muestra 'Usuario'
+    conn = conectar_bd() #conecto la base de datos
+    cursor = conn.cursor() #creo un cursor para ejecutar consultas
+    cursor.execute('SELECT * FROM clientes') #selecciono todos los clientes
+    clientes = cursor.fetchall() #guardo los clientes en una variable
+    conn.close() #cierro la conexion
+    return render_template('main.html', usuario=usuario, clientes=clientes) #muestro la plantilla main.html y le paso la variable usuario y clientes
+
+
+#==================ruta para ver los productos=====================
+@app.route('/productos')
+def productos():
+    conn = conectar_bd()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM productos')
+    productos = cursor.fetchall()
+    conn.close()
+    return render_template('productos.html', productos=productos)
+
+#=================ruta para registrar nuevos usuarios==================
+@app.route('/registrar', methods=['GET', 'POST'])
+def registrar():
+    if request.method == 'POST':
+        usuario = request.form['usuario']
+        contrasena = request.form['contrasena']
+        confirmpass = request.form['confirmpass']
+        
+        if contrasena != confirmpass:
+            flash('Las contraseñas no coinciden')
+            return redirect(url_for('registrar'))
+        
+        if not usuario or not contrasena or not confirmpass:
+            flash('Todos los campos son obligatorios')
+            return redirect(url_for('registrar'))
+
+        hash = generate_password_hash(contrasena)
+        conn = conectar_bd()
+        cursor = conn.cursor()
+        try:
+            cursor.execute('INSERT INTO usuarios (usuario, contrasena) VALUES (?, ?)', (usuario, hash))
+            conn.commit()
+            flash('Usuario registrado exitosamente')
+            return redirect(url_for('login'))
+        except sqlite3.IntegrityError:
+            flash('El usuario ya existe')
+            return redirect(url_for('registrar'))
+        finally:
+            conn.close()
+    return render_template('registrar.html')
+
+#=================ruta para verificar usuario y contraseña hasheadas==================
+#===Sirve para depurar, pero no debería quedar activa en producción porque muestra hashes. ✔️ Está bien para test, ❌ pero elimínala o protégela con autenticación una vez que tu app esté en uso real.
+@app.route('/verificar_usuario')
+def verificar_usuario():
+    conn = conectar_bd()
+    cursor = conn.cursor()
+    cursor.execute("SELECT usuario, contrasena FROM usuarios WHERE usuario = ?", ('jportalanza',))
+    row = cursor.fetchone()
+    conn.close()
+
+    if row:
+        return f"Usuario: {row['usuario']}<br>Contraseña (hash): {row['contrasena']}"
+    else:
+        return "Usuario no encontrado"
+
+#=================ruta para buscar clientes==================    
+@app.route('/buscar_cliente', methods=['POST'])
+def buscar_cliente():
+    criterio = request.form['criterio']
+    conn = conectar_bd()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM clientes WHERE nombre LIKE ? OR id LIKE ?", (f"%{criterio}%", f"%{criterio}%"))
+    clientes = cursor.fetchall()
+    conn.close()
+    return render_template('main.html', usuario='NombreUsuario', clientes=clientes)
+
+#usuario = session.get('usuario', 'Usuario')
+#return render_template('main.html', usuario=usuario, clientes=clientes) confirmar como deberia de ser y donde ponerlo
+
+#=================ejecuto la app================== 
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
+CODIGO MAIN ULTIMO MIO:
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ usuario }} | Gestión de clientes</title>
+    
+    <!--AGREGO BOOTSTRAP-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!--LIENA DE CODIGO CCS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">    
+
+</head>
+<body>
+    <!--NAVBAR-->
+    <nav class = "navbar navbar-expand-lg navbar-dark bg-dark fixed top">
+        <div class="container-fluid">
+            <button class="btn btn-outline-light me-2" id="sidebarToggle">☰</button>
+            <a class="navbar-brand" href="{{ url_for('main') }}">PINTUCENTER</a>
+            <div class ="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="nav-link"> Bienvenido, {{ usuario }}</span> 
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}"></a>🔓 Cerrar sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!--WRAPPER: SIDEBAR + CONTENIDO-->
+    <div class="d-flex" id="wrapper">  <!-- Contenedor flex para sidebar y contenido -->
+        <!--sidebar-->
+        <div class="bg-dark border-end" id="sidebar-wrapper">
+            <div class="sidebar-heading text-white text-center py-4">MENU</div>
+            <div class="list-group list-group-flush">
+                <a href="{{ url_for('main') }}" class="list-group-item list-group-item-action bg-dark text-white">🏠 Inicio</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white">👥 Clientes</a>
+                <a href="{{ url_for('productos') }}" class="list-group-item list-group-item-action bg-dark text-white">📦 Productos</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white">🛒 Pedidos</a>
+                <a href="{{ url_for('login') }}" class="list-group-item list-group-item-action bg-dark text-white">🔓 Cerrar sesión</a>
+            </div>
+        </div>
+
+        <!--CONTENIDO PRINCIPAL-->
+        <div id="page-content-wrapper" class="w-100 p-4">
+            <!--header-->
+            <header class="text-center mb-4">  <!-- Encabezado centrado con margen -->
+                <img src="{{ url_for('static', filename='img/PINTUCENTER500500.png') }}" alt="PINTUCENTER" class="logo-top mb-2"> <!-- Logo en la parte superior y centrado -->
+                <h1>Busqueda de clientes</h1> <!-- Saludo personalizado -->
+                <p>Consulta y gestion de clientes</p> <!-- Descripción breve -->
+            </header>
+        
+        <!-- Búsqueda -->
+            <section class="search-section mb-4 text-center">
+                <form method="post" action="{{ url_for('buscar_cliente') }}" class="d-flex justify-content-center" role="search">
+                    <input type="text" name="criterio" value="{{ request.form.get('criterio', '') }}" placeholder="Buscar cliente por RUC o NOMBRE" class="form-control w-50 me-2" aria-label="Buscar cliente">
+                    <button type="submit" class="btn btn-primary">🔍 Buscar</button>
+                </form>
+            </section>
+
+            <!-- Tabla -->
+            <section class="table-section">
+                <h2>Listado de Clientes</h2>
+                {% if clientes %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">RUC</th>
+                                    <th scope="col">Empresa</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Apellido</th>
+                                    <th scope="col">Correo</th>
+                                    <th scope="col">Teléfono</th>
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cliente in clientes %}
+                                <tr>
+                                    <td>{{ cliente['id'] }}</td>
+                                    <td>{{ cliente['ruc'] }}</td>
+                                    <td>{{ cliente['empresa'] }}</td>
+                                    <td>{{ cliente['nombre'] }}</td>
+                                    <td>{{ cliente['apellido'] }}</td>
+                                    <td>{{ cliente['correo'] }}</td>
+                                    <td>{{ cliente['telefono'] }}</td>
+                                    <td><span class="text-muted">✏️ Editar (no disponible aún)</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted fst-italic mt-3">No hay clientes registrados por el momento.</p>
+                {% endif %}
+            </section>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS y toggle sidebar -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const wrapper = document.getElementById('wrapper');
+        sidebarToggle.addEventListener('click', () => {
+            wrapper.classList.toggle('toggled');
+        });
+    </script>
+</body>
+</html>
+
+
+
+PARA VOLVER A COPIAR SI NO SIRVE
+
+ <li class="nav-item dropdown">
+                        <!-- Link principal del dropdown - no navega (solo despliega) -->
+                         <a class="nav-link dropdown-toggle" href="#" id="clientesDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            👥 Clientes
+                        </a>
+
+                        <!-- Lista del submenú que contiene "Búsqueda" -->
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="clientesDropdown">
+                            <!-- Enlace a la ruta que añadimos en app.py (/clientes/busqueda) -->
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('clientes_busqueda') }}">🔎 Búsqueda</a>
+                            </li>
+                            <!-- Aquí puedes agregar más opciones del submenú si lo deseas -->
+                        </ul>
+                    </li>
+
+
+quitar para prueba
+
+ <!-- 3) Contenedor del submenú (hermano inmediato del link padre) -->
+            <!-- 
+            - .submenu-items está oculto por defecto (max-height:0).
+            - Al hacer hover sobre el padre en escritorio, CSS lo mostrará.
+            - En móviles el JS agregará la clase 'open' al padre para mostrarlo.-->
+            <div class="submenu-items">
+                <!-- Enlace a la ruta que muestra main.html con la búsqueda -->
+                <a href="{{ url_for('clientes_busqueda') }}" 
+                    class="list-group-item list-group-item-action text-white ps-5"> 🔎 Búsqueda
+                </a>
+            <!-- Puedes agregar más opciones aquí si lo deseas -->
+            </div>
+
+
+
+SCRIPS POR SI ACASO
+
+<script>
+        // detectar el enlace que tiene la clase has-submenu en el sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            // seleccionamos todos los padres de submenu en sidebar
+            document.querySelectorAll('#sidebar-wrapper .has-submenu').forEach(function(el) {
+                el.addEventListener('click', function(e) {
+                    // en pantallas pequeñas prevenimos la navegación y alternamos clase 'open'
+                    if (window.innerWidth <= 991) {
+                        e.preventDefault();                // evitar que el <a href="#"> navegue
+                        el.classList.toggle('open');       // al agregar 'open' el CSS mostrará .submenu
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        // === TOGGLE DEL SIDEBAR EXISTENTE ===
+        // Las variables sidebarToggle y wrapper ya están declaradas arriba
+
+        sidebarToggle.addEventListener('click', () => {
+            wrapper.classList.toggle('toggled');
+        });
+
+        // === NUEVO: SUBMENÚ DE CLIENTES ===
+        const clientesDropdown = document.getElementById('clientesDropdown');
+        const submenuItems = document.querySelector('.submenu-items');
+        const clientesIcon = document.getElementById('clientesIcon');
+
+        // Escucha el click sobre "Clientes"
+        clientesDropdown.addEventListener('click', (e) => {
+            e.preventDefault(); // Evita que recargue la página
+            submenuItems.classList.toggle('show'); // Muestra o esconde el submenú
+
+            // Cambia el ícono ▾ ↔ ▴ según el estado
+            if (submenuItems.classList.contains('show')) {
+                clientesIcon.textContent = '▴'; // Flecha arriba
+            }
+            else {
+                clientesIcon.textContent = '▾'; // Flecha abajo
+            }
+        });
+    </script>
+
+
+todo mi main Css
+
+/* ===== GENERAL ===== */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+/* ===== WRAPPER ===== */
+#wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+/* ===== SIDEBAR ===== */
+/* TOGGLE SIDEBAR */
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: -220px; /* mueve la sidebar fuera de la vista */
+}
+    
+#sidebar-wrapper {
+    min-width: 220px;
+    max-width: 220px;
+    background-color: #343a40;
+    color: #fff;
+    transition: all 0.3s ease;
+    height: 100vh;
+}
+
+#sidebar-wrapper .sidebar-heading {
+    font-size: 1.2rem;
+}
+
+#sidebar-wrapper .list-group-item {
+    border: none;
+    padding: 15px 20px;
+}
+
+#sidebar-wrapper .list-group-item:hover /* Efecto hover para los ítems de la sidebar */ {
+    background-color: #495057;
+    color: #fff;
+}
+
+/* ===== CONTENIDO ===== */
+#page-content-wrapper {
+    width: 100%;
+    padding: 20px 40px;
+}
+
+/* LOGO HEADER */
+.logo-top {
+    width: 120px;
+    height: auto;
+}
+
+/* TABLA */
+.table-section {
+    overflow-x: auto;
+}
+
+.table-section table {
+    width: 100%;
+}
+
+.table-section th, .table-section td {
+    padding: 10px;
+    text-align: left;
+}
+
+.table-section th {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+.table-section tr:hover td {
+    background-color: #e9ecef;
+}
+
+/* BOTONES */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    transition: all 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* ===== TOGGLE SIDEBAR ===== */
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: -220px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: -220px;
+        position: fixed;
+        z-index: 1000;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: 0;
+    }
+
+    #page-content-wrapper {
+        padding: 15px;
+    }
+
+    .navbar .btn {
+        margin-right: 10px;
+    }
+}
+
+/* ---- SUBMENU del NAVBAR: mostrar dropdown al pasar el mouse (solo en pantallas grandes) ---- */
+@media (min-width: 992px) { /* a partir de "lg" de Bootstrap habilitamos hover */
+  /* si el usuario coloca el puntero sobre el nav-item.dropdown, mostramos la lista */
+  .navbar .dropdown:hover > .dropdown-menu {
+    display: block;       /* mostrar el menú */
+    margin-top: 0;        /* evitar espacio extraño */
+  }
+}
+
+/* ---- SUBMENU del SIDEBAR (vertical) ---- */
+.submenu {
+    display: none;       /* por defecto el submenú está oculto */
+}
+
+/* Mostrar el submenu cuando el elemento padre es hover (muestra al pasar el mouse) */
+.has-submenu:hover + .submenu,
+.submenu:hover {
+    display: block;      /* aparece el submenú */
+}
+
+/* Ajustes visuales del submenu: fondo igual al sidebar y sin borde */
+.submenu .list-group-item {
+    background-color: #343a40;
+    border: none;
+}
+
+/* En móviles (pantallas pequeñas) preferimos que el submenu se muestre con click */
+/* para esto, dejamos que el usuario toque el .has-submenu y JS puede alternar la clase */
+@media (max-width: 991px) {
+    /* en móvil mostramos submenu por defecto al tocar (si activamos la clase 'open' por JS) */
+    .submenu {
+        display: none;
+    }
+    .has-submenu.open + .submenu {
+        display: block;
+    }
+}
+
+/* ===========================
+   Submenú lateral: comportamiento y animación
+   =========================== */
+
+/* estilo del elemento padre para que la flecha y texto estén alineados */
+.has-submenu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* flecha: transición suave para rotar */
+.has-submenu .arrow {
+  transition: transform 0.45s ease;
+}
+
+/* Submenú oculto por defecto: max-height 0 + overflow hidden para animar */
+.submenu-items {
+  max-height: 0;                /* cerrado (no visible) */
+  overflow: hidden;             /* oculta contenido cuando está cerrado */
+  transition: max-height 0.45s ease, opacity 0.45s ease;
+  opacity: 0;
+}
+
+
+/* Mostrar al HACER HOVER sobre el elemento padre (escritorio) */
+.has-submenu:hover + .submenu-items {
+  max-height: 220px;
+  opacity: 1;
+}
+
+/* Rotar la flecha cuando el submenú está visible (hover o clase open) */
+.has-submenu:hover .arrow,
+.has-submenu.open .arrow {
+  transform: rotate(180deg); /* ▾ -> ▴ */
+}
+
+/* Estilos visuales de los items del submenú */
+.submenu-items .list-group-item {
+  background-color: #343a40;  /* mismo fondo que sidebar para continuidad */
+  border: none;
+  padding-left: 2.5rem;       /* sangría para indicar jerarquía */
+}
+
+.submenu-items .list-group-item:hover {
+  background-color: #495057;  /* ligero cambio en hover */
+}
+
+/* En pantallas muy pequeñas, el hover no existe: .open hace el toggle por JS */
+@media (max-width: 991px) {
+  /* Resetea el hover-behavior si lo deseas o lo dejamos para fallback */
+  /* no forzamos hover en móvil; dependeremos del JS para abrir */
+}
+
+
+/* ===== SUBMENÚ LATERAL (Clientes) ===== */
+
+/* padre del submenú */
+.has-submenu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative; /* necesario para que el submenú absoluto se base en este padre */
+}
+
+/* flecha con transición */
+.has-submenu .arrow {
+  transition: transform 0.3s ease;
+}
+
+/* submenú oculto por defecto */
+.submenu-items {
+  position: absolute;        /* flota sobre el contenido principal */
+  left: 100%;                /* alineado al borde derecho del padre */
+  top: 0;                    /* arriba del padre */
+  background-color: #343a40; /* mismo fondo que sidebar */
+  border: none;
+  max-height: 0;             /* cerrado */
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.35s ease, opacity 0.25s ease;
+  pointer-events: none;      /* evitar clicks cuando está cerrado */
+  z-index: 1000;             /* asegurar que esté sobre el contenido */
+}
+
+/* mostrar submenú al hacer hover (escritorio) o con clase 'open' (móvil) */
+.has-submenu:hover .submenu-items,
+.has-submenu.open .submenu-items {
+  max-height: 240px;         /* ajusta según cantidad de ítems */
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* rotar la flecha cuando está abierto */
+.has-submenu:hover .arrow,
+.has-submenu.open .arrow {
+  transform: rotate(180deg);
+}
+
+/* estilo visual de los items del submenú */
+.submenu-items .list-group-item {
+  background-color: #343a40;
+  border: none;
+  padding-left: 2.5rem;
+}
+
+.submenu-items .list-group-item:hover {
+  background-color: #495057;
+}
+
+
+
+MI MAIN HTML COMPLETO
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ usuario }} | Gestión de clientes</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- Enlace a Bootstrap CSS -->
+
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top"> <!-- Navbar oscuro fijo en la parte superior -->
+        <div class="container-fluid"> <!-- Contenedor fluido para que ocupe todo el ancho -->
+            <button class="btn btn-outline-light me-2" id="sidebarToggle" aria-label="Mostrar u ocultar menú">☰</button> <!-- Botón para togglear la sidebar -->
+            <a class="navbar-brand" href="{{ url_for('main') }}">PINTUCENTER</a> <!-- Marca del navbar que enlaza a la página principal -->
+            <div class="collapse navbar-collapse"> <!-- Contenedor para los elementos del navbar -->
+                <ul class="navbar-nav ms-auto"> <!-- Alinea los elementos a la derecha -->
+                    <li class="nav-item"> <!-- Muestra el nombre del usuario -->
+                        <span class="nav-link"> Bienvenido, {{ usuario }}</span>
+                    </li>
+
+                    <li class="nav-item dropdown"> <!-- Elemento de dropdown para opciones del usuario -->
+                        <!-- Enlaza a la ruta logout que agregaste en app.py -->
+                        <a class="nav-link dropdown-toggle" href="{{ url_for('logout') }}">🔓 Cerrar sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- WRAPPER: SIDEBAR + CONTENIDO -->
+    <div class="d-flex" id="wrapper"> <!-- Contenedor flex para sidebar y contenido -->
+        <!-- SIDEBAR -->
+        <div class="bg-dark border-end" id="sidebar-wrapper">
+            <div class="sidebar-heading text-white text-center py-4">MENU</div>
+            <div class="list-group list-group-flush">
+
+                <!-- Inicio -->
+                <a href="{{ url_for('main') }}" class="list-group-item list-group-item-action bg-dark text-white"> 🏠 Inicio
+                </a>
+
+                <!-- CLIENTES con submenú (padre) -->
+                <!-- id="clientesToggle" lo usamos en JS/CSS -->
+                <a href="#" 
+                    id="clientesToggle" 
+                    class="list-group-item list-group-item-action bg-dark text-white d-flex justify-content-between align-items-center has-submenu"
+                    aria-expanded="false">
+                    <span>👥 Clientes</span>
+                    <span class="arrow">▾</span> <!-- Flecha que rotará cuando esté abierto -->
+                </a>
+
+                <!-- SUBMENÚ (hermano inmediato del padre) -->
+                <!-- .submenu-items está oculta por defecto y se muestra con CSS/JS -->
+                <div class="submenu-items">
+                    <a href="{{ url_for('clientes_busqueda') }}" class="list-group-item list-group-item-action text-white ps-5">
+                        🔎 Búsqueda
+                    </a>
+                <!-- si quieres más ítems, añádelos aquí -->
+                </div>
+
+                <!-- Otros links -->
+                <a href="{{ url_for('productos') }}" class="list-group-item list-group-item-action bg-dark text-white">📦 Productos</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white">🛒 Pedidos</a>
+
+                <!-- Cerrar sesión -->
+                <a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action bg-dark text-white">🔓 Cerrar sesión</a>
+            </div>
+        </div>
+    </div>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <!-- mt-5 evita que el contenido quede oculto detrás del navbar fixed-top -->
+        <div id="page-content-wrapper" class="w-100 p-4 mt-5"> <!-- Contenedor del contenido con padding y margen superior -->
+            <!-- HEADER -->
+            <header class="text-center mb-4"> <!-- Encabezado centrado con margen inferior -->
+                <img src="{{ url_for('static', filename='img/PINTUCENTER500500.png') }}" alt="PINTUCENTER" class="logo-top mb-2">
+                <h1>Búsqueda de clientes</h1>
+                <p>Consulta y gestión de clientes</p>
+            </header>
+
+            <!-- FLASH MESSAGES (muestra mensajes enviados desde app.py) -->
+            {% with messages = get_flashed_messages(with_categories=true) %} <!-- Captura los mensajes flash con categorías -->
+                {% if messages %}
+                    <div class="container mb-3"> <!-- Contenedor para los mensajes con margen inferior -->
+                         <!-- Itera sobre los mensajes y muestra cada uno con su categoría -->
+                        {% for category, message in messages %} <!-- category puede ser 'success', 'danger', etc. --> <!-- Asegúrate de que las categorías coincidan con las clases de Bootstrap -->
+                            <div class="alert alert-{{ category if category in ['success','danger','warning','info'] else 'info' }} alert-dismissible fade show" role="alert"> <!-- Clase dinámica según la categoría -->
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button> <!-- Botón para cerrar el mensaje -->
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- BÚSQUEDA -->
+            <section class="search-section mb-4 text-center"> <!-- Sección de búsqueda centrada con margen inferior -->
+                <form method="post" action="{{ url_for('buscar_cliente') }}" class="d-flex justify-content-center" role="search"> <!-- Formulario que envía datos a la ruta 'buscar_cliente' -->
+                    <!-- El valor del input se mantiene tras el POST usando request.form.get -->
+                    <!-- request.form.get funciona cuando la página se renderiza tras un POST -->
+                    <input type="text" name="criterio" value="{{ request.form.get('criterio', '') }}" placeholder="Buscar cliente por RUC o NOMBRE" class="form-control w-50 me-2" aria-label="Buscar cliente"> <!-- Campo de texto para el criterio de búsqueda -->
+                    <button type="submit" class="btn btn-primary">🔍 Buscar</button>
+                </form>
+            </section>
+
+            <!-- TABLA -->
+            <section class="table-section">
+                <h2>Listado de Clientes</h2>
+                {% if clientes %}
+                    <div class="table-responsive"><!-- Contenedor para hacer la tabla responsiva -->
+                         <!-- Tabla con clases de Bootstrap para estilo y comportamiento -->
+                        <table class="table table-striped table-hover"> <!-- table-striped para filas alternadas, table-hover para efecto hover -->
+                             <!-- Encabezado de la tabla con fondo oscuro -->
+                            <thead class="table-dark"> <!-- Encabezado oscuro -->
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">RUC</th>
+                                    <th scope="col">Empresa</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Apellido</th>
+                                    <th scope="col">Correo</th>
+                                    <th scope="col">Teléfono</th>
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cliente in clientes %}
+                                <tr>
+                                    <td>{{ cliente['id'] }}</td>
+                                    <td>{{ cliente['ruc'] }}</td>
+                                    <td>{{ cliente['empresa'] }}</td>
+                                    <td>{{ cliente['nombre'] }}</td>
+                                    <td>{{ cliente['apellido'] }}</td>
+                                    <td>{{ cliente['correo'] }}</td>
+                                    <td>{{ cliente['telefono'] }}</td>
+                                    <td><span class="text-muted">✏️ Editar (no disponible aún)</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted fst-italic mt-3">No hay clientes registrados por el momento.</p>
+                {% endif %}
+            </section>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS y toggle sidebar (con guardas para evitar errores si el DOM cambia) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const wrapper = document.getElementById('wrapper');
+        if (sidebarToggle && wrapper) {
+            sidebarToggle.addEventListener('click', () => {
+                wrapper.classList.toggle('toggled');
+            });
+        }
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sidebar toggle (botón "☰")
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const wrapper = document.getElementById('wrapper');
+        if (sidebarToggle && wrapper) {
+            sidebarToggle.addEventListener('click', function () {
+                wrapper.classList.toggle('toggled');
+            });
+        }
+
+        // Submenú "Clientes"
+        const clientesToggle = document.getElementById('clientesToggle'); // el <a> padre
+        const submenuItems = document.querySelector('.submenu-items');     // el bloque a mostrar/ocultar
+        const arrow = clientesToggle ? clientesToggle.querySelector('.arrow') : null;
+
+        if (clientesToggle && submenuItems) {
+            // --- MÓVIL: togglear con click/tap ---
+            clientesToggle.addEventListener('click', function (e) {
+                // Solo interceptamos el click en pantallas pequeñas (sin hover)
+                if (window.innerWidth <= 991) {
+                    e.preventDefault();
+                    const opened = clientesToggle.classList.toggle('open'); // agrega/quita clase 'open'
+                    clientesToggle.setAttribute('aria-expanded', opened ? 'true' : 'false');
+
+                    // sincronizamos la clase 'show' en el submenu para activar la animación CSS
+                    if (opened) submenuItems.classList.add('show');
+                    else submenuItems.classList.remove('show');
+                }
+            });
+
+            // --- ESCRITORIO: evitar que el submenú desaparezca al mover el mouse ---
+            // añadimos pequeños timeouts para evitar flicker al moverse entre padre y submenu
+            let hideTimeout;
+
+            clientesToggle.addEventListener('mouseenter', function() {
+                clearTimeout(hideTimeout);
+                submenuItems.classList.add('show');
+                if (arrow) arrow.style.transform = 'rotate(180deg)';
+            });
+            clientesToggle.addEventListener('mouseleave', function() {
+                // espera 200ms antes de ocultar, así el usuario puede moverse hacia el submenu
+                hideTimeout = setTimeout(function() {
+                    if (window.innerWidth > 991) {
+                        submenuItems.classList.remove('show');
+                        if (arrow) arrow.style.transform = '';
+                    }
+                }, 200);
+            });
+
+            submenuItems.addEventListener('mouseenter', function() {
+                clearTimeout(hideTimeout);
+                submenuItems.classList.add('show');
+                if (arrow) arrow.style.transform = 'rotate(180deg)';
+            });
+            submenuItems.addEventListener('mouseleave', function() {
+                hideTimeout = setTimeout(function() {
+                    if (window.innerWidth > 991) {
+                    submenuItems.classList.remove('show');
+                    if (arrow) arrow.style.transform = '';
+                    }
+                }, 200);
+            });
+
+            // Si se redimensiona la ventana a desktop, limpiamos estados de móvil
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 991) {
+                    clientesToggle.classList.remove('open');
+                    clientesToggle.setAttribute('aria-expanded', 'false');
+                    submenuItems.classList.remove('show');
+                    if (arrow) arrow.style.transform = '';
+                }
+            });
+        }
+    });
+    </script>
+</body>
+
+
+
+
+
+
+ESTILOS PARA COTIZACION
+
+/* Estilos adicionales rápidos (puedes moverlos a cotizacion.css) */
+    .form-card {
+        max-width: 1000px;
+        margin: 30px auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        padding: 24px;
+    }
+    .form-card h2 { color: #0d6efd; text-align:center; margin-bottom:18px; }
+    #tablaItems th, #tablaItems td { vertical-align: middle; }
+    #tablaItems input.form-control { min-width: 90px; }
+    .totales { margin-top: 18px; text-align: right; max-width:420px; float:right; }
+    .totales .fila { display:flex; justify-content:space-between; gap:10px; padding:4px 0; }
+    .btn-compact { padding: 6px 10px; border-radius:6px; }
+</html>
+
+
+
+
+y ahora quiero implementar que los productos los agarre directamente de mi base de datos clientes.db de la tabla productos que ya esta creada y tiene la siguiente estructura

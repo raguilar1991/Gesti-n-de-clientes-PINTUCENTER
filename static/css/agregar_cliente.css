@@ -1,0 +1,276 @@
+/* ===========================
+   AGREGAR CLIENTE - ESTILOS
+=========================== */
+
+/* LOGO HEADER */
+.logo-top {
+    width: 120px;
+    height: auto;
+}
+
+/* CARD FORM MODERNO */
+.form-card {
+    max-width: 650px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    padding: 30px 25px;
+    transition: all 0.3s ease;
+}
+
+/* TITULO DEL FORMULARIO */
+.form-card h2 {
+    color: #0d6efd;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+/* GRUPOS DE INPUTS */
+.form-card .form-control {
+    border-radius: 8px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+
+/* FOCUS EN INPUTS */
+.form-card .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 8px rgba(13,110,253,0.4);
+}
+
+/* LABELS */
+.form-card .form-label {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+/* BOTON GUARDAR */
+.form-card .btn-primary {
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.form-card .btn-primary:hover {
+    background-color: #0b5ed7;
+}
+
+/* FLASH MESSAGES */
+.alert {
+    max-width: 650px;
+    margin: 15px auto;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .form-card {
+        margin: 20px 15px;
+        padding: 25px 20px;
+    }
+}
+
+/* INPUT GROUP ICONS */
+.input-group-text {
+    background-color: #0d6efd;
+    color: #fff;
+    border-radius: 8px 0 0 8px;
+    border: none;
+}
+
+/* ===========================
+   EFECTOS Y VALIDACIÓN AVANZADA
+=========================== */
+
+/* ANIMACIÓN DE APARICIÓN */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.form-card {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* EFECTO AL PASAR EL MOUSE SOBRE LA TARJETA */
+.form-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+}
+
+/* EFECTO DE FOCO VISUAL */
+.input-group:focus-within {
+    border-color: #0d6efd;
+    box-shadow: 0 0 8px rgba(13, 110, 253, 0.4);
+}
+
+/* CAMBIO DE COLOR AL ESCRIBIR */
+.form-control:valid {
+    border-left: 4px solid #198754; /* verde */
+}
+
+.form-control:invalid:focus {
+    border-left: 4px solid #dc3545; /* rojo */
+}
+
+/* AJUSTE DEL BOTÓN */
+.btn-primary {
+    width: 100%;
+    background-color: #0d6efd;
+    border: none;
+    padding: 14px 0;
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    transform: scale(1.02);
+}
+
+/*===== TRAIGO DEL MAIN MENU LATERAL =====*/
+
+/* ===== SIDEBAR ===== */
+#sidebar-wrapper {
+    min-width: 220px;
+    max-width: 220px;
+    background-color: #343a40;
+    color: #fff;
+    transition: all 0.5s ease; /* animación al ocultar/mostrar */
+    height: 100%;
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    z-index: 1000;
+    margin-left: 0; /* visible por defecto */
+}
+
+#page-content-wrapper {
+    width: calc(100% - 220px); /* ✅ deja espacio para el sidebar */
+    margin-left: 220px; /* ✅ empuja el contenido a la derecha */
+    padding: 20px 40px;
+    margin-top: 56px;
+    transition: all 0.5s ease; /* ✅ puedes agregar esta línea aquí */
+}
+
+#wrapper.toggled #page-content-wrapper { /* Ajuste para agregar_cliente */
+    margin-left: 0 !important; /* Anula el margen izquierdo */
+    width: 100% !important; /* Ocupa todo el ancho */
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: -220px; /* oculto al togglear */
+}
+
+#sidebar-wrapper .sidebar-heading {
+    font-size: 1.2rem;
+}
+
+#sidebar-wrapper .list-group-item {
+    border: none;
+    padding: 15px 20px;
+    cursor: pointer;
+}
+
+#sidebar-wrapper .list-group-item:hover {
+    background-color: #495057;
+    color: #fff;
+}
+
+/*esconderse correctamente en paginas de celular*/
+
+@media (max-width: 768px) {
+    #sidebar-wrapper {
+        position: fixed;
+        margin-left: -220px;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: 0;
+    }
+
+    #page-content-wrapper {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+
+/* ===== SUBMENÚ LATERAL ===== */
+.has-submenu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.has-submenu .arrow {
+    transition: transform 0.3s ease;
+}
+
+.submenu-items {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.25s ease;
+    pointer-events: none;
+}
+
+.submenu-items.show,
+.has-submenu.open + .submenu-items {
+    max-height: 240px;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.has-submenu.open .arrow {
+    transform: rotate(180deg);
+}
+
+/* ====== ESTILOS DE LOS ÍTEMS DEL SUBMENÚ ====== */
+.submenu-items .list-group-item {
+    background-color: #343a40; /* mismo color del sidebar */
+    color: #fff;               /* ✅ texto blanco visible */
+    border: none;
+    padding-left: 2.5rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.submenu-items .list-group-item:hover {
+    background-color: #495057; /* gris más claro */
+    color: #fff;               /* mantiene contraste */
+}
+
+.submenu-items .list-group-item i {
+    color: #fff;
+}
+
+/* ===========================
+   VALIDACIÓN INTERACTIVA
+=========================== */
+
+.is-valid {
+    border-color: #198754 !important;
+    box-shadow: 0 0 5px rgba(25, 135, 84, 0.3);
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 5px rgba(220, 53, 69, 0.3);
+}
+
+.invalid-feedback {
+    color: #dc3545;
+    font-size: 0.9em;
+    margin-top: 5px;
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
